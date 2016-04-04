@@ -33,6 +33,8 @@ class TimeWindow(object):
         """
         Main update method.
         Takes new tweet into time_window and updates the timeframe of the window.
+        Program first checks if cutoff_time is None (new time_window) or that the tweet's
+        timestamp falls within or beyond (not before) the timeframe. If before, ignore the tweet.
         The new tweet is then checked to see if it satifies 
             1. Number of hashtags >= 2
             2. Hashtags of new tweet are a distinct set from other tweets' currently in window
@@ -46,8 +48,13 @@ class TimeWindow(object):
         Lastly, the running connection average of the hashtag graph is calculated and is
         stored to an output file to 2 decimals of precision. 
         """
-        # Update timeframe regardless of number of hashtags in tweet
-        self.update_timeframe(new_tweet)
+        # If new_tweet's timestamp is greater than the cutoff_time
+        if self.cutoff_time is None or new_tweet.timestamp >= self.cutoff_time:
+        	# Update timeframe regardless of number of hashtags in tweet
+        	self.update_timeframe(new_tweet)
+        # Else the new tweet is to be ignored due to it pre-"dating" the cutoff time of the window
+        else:
+        	return
 
         # Update tweets if tweet hashtag number >= 2 and tweet's set of hashtags is DISTINCT
         if new_tweet.number_of_hashtags >= 2 and self.check_distinct(new_tweet):
@@ -93,7 +100,7 @@ class TimeWindow(object):
         # Update time_window hashtags and constructs hashtag graph
         for hashtag in new_tweet.hashtags:
             self.hashtags.append(hashtag)
-            linked_hashtags = set(new_tweet.hashtags) - set([hashtag])
+            linked_hashtags = list(set(new_tweet.hashtags) - set([hashtag]))
 
             # If current hashtag isn't already in the graph, it creates a new node and edges
             if hashtag not in self.hashtag_graph:
@@ -101,7 +108,7 @@ class TimeWindow(object):
             # Else the existing hashtag node has it's edges updated with new hashtag connections
             else:
                 for linked_hashtag in linked_hashtags:
-                    self.hashtag_graph[hashtag].add(linked_hashtag)
+                    self.hashtag_graph[hashtag].append(linked_hashtag)
 
 
     def remove_outdated_tweets(self):
@@ -126,7 +133,11 @@ class TimeWindow(object):
                     for linked_hashtag in linked_hashtags:      
                         if linked_hashtag in self.hashtag_graph[hashtag]:
                             self.hashtag_graph[hashtag].remove(linked_hashtag)
-                
+
+                            # Checks if hashtag no longer has any connections. If so, remove from graph
+                            if len(self.hashtag_graph[hashtag]) == 0:
+                            	del self.hashtag_graph[hashtag]
+
 
     def update_timeframe(self, tweet):
         """
@@ -149,9 +160,11 @@ class TimeWindow(object):
         number_connections = 0
 
         for values in self.hashtag_graph.values():
-            number_connections += len(values)
+            number_connections += len(set(values))
 
         try:
             self.running_average_connections = number_connections / total_graph_hashtag_number    
         except ZeroDivisionError:
             self.running_average_connections = 0
+
+        
