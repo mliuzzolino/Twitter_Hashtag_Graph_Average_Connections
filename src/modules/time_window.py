@@ -1,8 +1,6 @@
 from __future__ import division
-from collections import Counter
 from datetime import datetime
 from dateutil.relativedelta import *
-import time
 
 
 class TimeWindow(object):
