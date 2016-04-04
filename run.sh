@@ -1,0 +1,1 @@
+python ./src/main.py ./tweet_input/tweets.txt ./tweet_output/output.txt
