@@ -38,7 +38,14 @@ The following Python libraries were utilized:
 
 ## Tests
 
-Describe and show how to run the tests with code examples.
+Simple tests can be found within the insight_testsuite directory witin the parent directory.
+
+To run the tests, navigate to the insight_testsuite/ directory and enter the following command:
+    sh run_tests.sh
+
+To add new tests, create a new directory within the insight_testsuite/tests directory, making sure to include tweet_input and tweet_output directories within the new test directory. In the tweet_input directory, include a file titled "tweets.txt" that contains desired test tweet data. In the tweet_output directory, include a file titled "output.txt" with the correct sequence of outputs that will be checked against the output of your program.
+
+Running run_tests.sh will yield PASS or FAIL to indicate the success of the test.
 
 
 
