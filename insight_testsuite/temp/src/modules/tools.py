@@ -38,6 +38,7 @@ def generate_graph(tweet_list, time_window, output_file_path):
         time_window.update(tweet)
 
         with open(output_file_path, "a") as outfile:
-            average_connections = "{:.2f}\n".format(time_window.running_average_connections)
+            average_connections = "{:.3f}".format(time_window.running_average_connections)
+            average_connections = average_connections[:-1] + "\n"
             outfile.write(average_connections)
         

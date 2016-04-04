@@ -1,8 +1,6 @@
 from __future__ import division
-from collections import Counter
 from datetime import datetime
 from dateutil.relativedelta import *
-import time
 
 
 class TimeWindow(object):
@@ -138,7 +136,6 @@ class TimeWindow(object):
                             if len(self.hashtag_graph[hashtag]) == 0:
                             	del self.hashtag_graph[hashtag]
 
-                
 
     def update_timeframe(self, tweet):
         """
@@ -168,4 +165,4 @@ class TimeWindow(object):
         except ZeroDivisionError:
             self.running_average_connections = 0
 
-        
+        print(self.running_average_connections)
